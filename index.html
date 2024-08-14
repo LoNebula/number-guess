@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+
+    <title>Number guessing game</title>
+
+    <style>
+      html {
+        font-family: 'Arial', sans-serif;
+        background: url('images/image1.jpeg') no-repeat center center fixed;
+        background-size: cover;
+        color: #333;
+      }
+
+      body {
+        width: 50%;
+        max-width: 800px;
+        min-width: 480px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+        border-radius: 10px;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
+      }
+      
+      h1 {
+        color: #ff6347;
+        text-align: center;
+        font-size: 2.5em;
+      }
+
+      p {
+        font-size: 1.2em;
+      }
+
+      .form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .form label {
+        margin-right: 10px;
+        font-weight: bold;
+      }
+
+      .form input[type="number"] {
+        width: 200px;
+        padding: 10px;
+        font-size: 1em;
+        border: 2px solid #ff6347;
+        border-radius: 5px;
+        margin-right: 10px;
+      }
+
+      .form input[type="submit"] {
+        padding: 10px 20px;
+        font-size: 1em;
+        color: white;
+        background: linear-gradient(to right, #daff47, #ff4500);
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .form input[type="submit"]:hover {
+        background: linear-gradient(to right, #ff4500, #6647ff);
+      }
+
+      .lastResult {
+        color: white;
+        padding: 5px;
+        font-size: 1.5em;
+        text-align: center;
+        margin: 10px 0;
+      }
+
+      .resultParas p {
+        font-size: 1.2em;
+      }
+
+      .lowOrHi {
+        font-size: 1.2em;
+        font-weight: bold;
+      }
+
+      button {
+        display: block;
+        margin: 20px auto;
+        padding: 10px 20px;
+        font-size: 1em;
+        color: white;
+        background: linear-gradient(to right, #4682b4, #5a9bd4);
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      button:hover {
+        background: linear-gradient(to right, #5a9bd4, #4682b4);
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>数当てゲー～ーーーーーーーーム</h1>
+
+    <p>1～100までのランダムな数を当ててみよう</p>
+    <p>チャンスは10回までだぜ！！</p>
+
+    <div class="form">
+      <label for="guessField">予想: </label>
+      <input type="number" min="1" max="100" required id="guessField" class="guessField">
+      <input type="submit" value="Submit guess" class="guessSubmit">
+    </div>
+
+    <div class="resultParas">
+      <p class="guesses"></p>
+      <p class="lastResult"></p>
+      <p class="lowOrHi"></p>
+    </div>
+
+    <script>
+      let randomNumber = Math.floor(Math.random() * 100) + 1;
+
+      const guesses = document.querySelector('.guesses');
+      const lastResult = document.querySelector('.lastResult');
+      const lowOrHi = document.querySelector('.lowOrHi');
+
+      const guessSubmit = document.querySelector('.guessSubmit');
+      const guessField = document.querySelector('.guessField');
+
+      let guessCount = 1;
+      let resetButton;
+      guessField.focus();
+
+      function checkGuess() {
+        const userGuess = Number(guessField.value);
+        if (guessCount === 1) {
+          guesses.textContent = '前回までの予想: ';
+        }
+        guesses.textContent += `${userGuess} `;
+
+        if (userGuess === randomNumber) {
+          lastResult.textContent = '当たり！おめでとう';
+          lastResult.style.backgroundColor = 'green';
+          lowOrHi.textContent = '';
+          setGameOver();
+        } else if (guessCount === 10) {
+          lastResult.textContent = 'ゲーーーーーーーーーームオーバ～';
+          lowOrHi.textContent = '';
+          setGameOver();
+        } else {
+          lastResult.textContent = '違う！';
+          lastResult.style.backgroundColor = 'red';
+          if (userGuess < randomNumber) {
+            lowOrHi.textContent = '低すぎやで！！！！';
+          } else if (userGuess > randomNumber) {
+            lowOrHi.textContent = '高すぎやわ';
+          }
+        }
+
+        guessCount++;
+        guessField.focus();
+      }
+
+      guessSubmit.addEventListener('click', checkGuess);
+
+      function setGameOver() {
+        guessField.disabled = true;
+        guessSubmit.disabled = true;
+        resetButton = document.createElement('button');
+        resetButton.textContent = 'スタート新規ゲーム';
+        document.body.append(resetButton);
+        resetButton.addEventListener('click', resetGame);
+      }
+
+      function resetGame() {
+        guessCount = 1;
+        const resetParas = document.querySelectorAll('.resultParas p');
+        for (const resetPara of resetParas) {
+          resetPara.textContent = '';
+        }
+        resetButton.parentNode.removeChild(resetButton);
+        guessField.disabled = false;
+        guessSubmit.disabled = false;
+        guessField.value = '';
+        guessField.focus();
+        lastResult.style.backgroundColor = 'white';
+        randomNumber = Math.floor(Math.random() * 100) + 1;
+      }
+    </script>
+  </body>
+</html>
